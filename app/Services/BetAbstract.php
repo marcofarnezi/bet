@@ -15,7 +15,7 @@ abstract class BetAbstract implements BetInterface
     protected $prize_rules = [];
     protected $board = [];
     protected $rules;
-    protected $premium = [];
+    protected $winning_game = [];
     protected $win_total = 0;
 
     /**

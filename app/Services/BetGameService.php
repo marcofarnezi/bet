@@ -61,7 +61,7 @@ class BetGameService extends BetAbstract
      */
     private function calculateWinTotal(): int
     {
-        foreach ($this->premium as $premiumSequence) {
+        foreach ($this->winning_game as $premiumSequence) {
             $this->win_total += ($this->prize_rules[$premiumSequence] * 100) / $this->bet_amount;
         }
 
@@ -76,9 +76,9 @@ class BetGameService extends BetAbstract
     private function checkSequence($line, $sequence): array
     {
         if (array_key_exists($sequence, $this->prize_rules)) {
-            $this->premium[implode(' ', $line)] = $sequence;
+            $this->winning_game[implode(' ', $line)] = $sequence;
         }
-        return $this->premium;
+        return $this->winning_game;
     }
 
     /**
@@ -86,7 +86,7 @@ class BetGameService extends BetAbstract
      */
     private function boardString(): string
     {
-        return implode(', ', $this->board);
+        return '[' . implode(', ', $this->board) . ']';
     }
 
     /**
@@ -96,11 +96,10 @@ class BetGameService extends BetAbstract
     {
         $result = [
             'board' => $this->boardString(),
-            'paylines' => $this->premium,
+            'paylines' => $this->winning_game,
             'bet_amount' => $this->bet_amount,
             'win_total' => $this->win_total
         ];
-
 
         return json_encode($result, JSON_PRETTY_PRINT);
     }
