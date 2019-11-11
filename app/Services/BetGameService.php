@@ -53,15 +53,17 @@ class BetGameService extends BetAbstract
                 $sequenceCount = 1;
             }
         }
-        return $this->calculateWinTotal();
+
+        return $this->calculateWinTotal($this->winning_game);
     }
 
     /**
+     * @param $winning_game
      * @return int
      */
-    private function calculateWinTotal(): int
+    private function calculateWinTotal($winning_game): int
     {
-        foreach ($this->winning_game as $premiumSequence) {
+        foreach ($winning_game as $premiumSequence) {
             $this->win_total += ($this->prize_rules[$premiumSequence] * 100) / $this->bet_amount;
         }
 
