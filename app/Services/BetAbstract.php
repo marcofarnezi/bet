@@ -10,14 +10,14 @@ use App\Contracts\RuleInterface;
  */
 abstract class BetAbstract implements BetInterface
 {
-    protected $bet_amount;
-    protected $board_config = [];
-    protected $rules_lines = [];
-    protected $prize_rules = [];
+    protected $betAmount;
+    protected $boardConfig = [];
+    protected $rulesLines = [];
+    protected $prizeRules = [];
     protected $board = [];
     protected $rules;
-    protected $winning_game = [];
-    protected $win_total = 0;
+    protected $winningGame = [];
+    protected $winTotal = 0;
 
     /**
      * BetAbstract constructor.
@@ -38,7 +38,7 @@ abstract class BetAbstract implements BetInterface
      */
     public function start($bet_amount): int
     {
-        $this->bet_amount = $bet_amount;
+        $this->betAmount = $bet_amount;
         return $bet_amount;
     }
 
@@ -48,8 +48,8 @@ abstract class BetAbstract implements BetInterface
      */
     public function addRuleToCheck(array $rule_lines): array
     {
-        array_push($this->rules_lines, $rule_lines);
-        return $this->rules_lines;
+        array_push($this->rulesLines, $rule_lines);
+        return $this->rulesLines;
     }
 
     /**
@@ -59,8 +59,8 @@ abstract class BetAbstract implements BetInterface
      */
     public function addPrizeRules(int $sequence, int $premium) : array
     {
-        $this->prize_rules[$sequence] = $premium;
-        return $this->prize_rules;
+        $this->prizeRules[$sequence] = $premium;
+        return $this->prizeRules;
     }
 
     /**

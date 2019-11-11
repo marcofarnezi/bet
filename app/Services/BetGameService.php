@@ -12,7 +12,7 @@ class BetGameService extends BetAbstract
      */
     public function generateGame(): array
     {
-        foreach ($this->board_config as $line) {
+        foreach ($this->boardConfig as $line) {
             $lineBord = [];
             foreach ($line as $position) {
                 $lineBord[$position] = $this->generateValuesBoard();
@@ -37,7 +37,7 @@ class BetGameService extends BetAbstract
      */
     public function checkBetResults(): int
     {
-        foreach ($this->rules_lines as $colums => $line) {
+        foreach ($this->rulesLines as $colums => $line) {
             $sequenceCount = 0;
             $key = array_key_first(array_flip($line));
             $last = $this->board[$key];
@@ -54,7 +54,7 @@ class BetGameService extends BetAbstract
             }
         }
 
-        return $this->calculateWinTotal($this->winning_game);
+        return $this->calculateWinTotal($this->winningGame);
     }
 
     /**
@@ -64,10 +64,10 @@ class BetGameService extends BetAbstract
     private function calculateWinTotal($winning_game): int
     {
         foreach ($winning_game as $premiumSequence) {
-            $this->win_total += ($this->prize_rules[$premiumSequence] * 100) / $this->bet_amount;
+            $this->winTotal += ($this->prizeRules[$premiumSequence] * 100) / $this->betAmount;
         }
 
-        return $this->win_total;
+        return $this->winTotal;
     }
 
     /**
@@ -77,10 +77,10 @@ class BetGameService extends BetAbstract
      */
     private function checkSequence($line, $sequence): array
     {
-        if (array_key_exists($sequence, $this->prize_rules)) {
-            $this->winning_game[implode(' ', $line)] = $sequence;
+        if (array_key_exists($sequence, $this->prizeRules)) {
+            $this->winningGame[implode(' ', $line)] = $sequence;
         }
-        return $this->winning_game;
+        return $this->winningGame;
     }
 
     /**
@@ -98,9 +98,9 @@ class BetGameService extends BetAbstract
     {
         $result = [
             'board' => $this->boardString(),
-            'paylines' => $this->winning_game,
-            'bet_amount' => $this->bet_amount,
-            'win_total' => $this->win_total
+            'paylines' => $this->winningGame,
+            'bet_amount' => $this->betAmount,
+            'win_total' => $this->winTotal
         ];
 
         return json_encode($result, JSON_PRETTY_PRINT);
@@ -129,7 +129,7 @@ class BetGameService extends BetAbstract
             $this->addRuleToCheck($pay_game);
         }
 
-        return $this->rules_lines;
+        return $this->rulesLines;
     }
 
     /**
@@ -137,8 +137,8 @@ class BetGameService extends BetAbstract
      */
     private function loadBoardConfig(): array
     {
-        $this->board_config = $this->rules['board_config'];
-        return $this->board_config;
+        $this->boardConfig = $this->rules['board_config'];
+        return $this->boardConfig;
     }
 
     /**
@@ -150,7 +150,7 @@ class BetGameService extends BetAbstract
             $this->addPrizeRules($pay_value['sequence'], $pay_value['value']);
         }
 
-        return $this->prize_rules;
+        return $this->prizeRules;
     }
 
     /**
