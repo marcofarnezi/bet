@@ -104,11 +104,6 @@ class BetGameService extends BetAbstract
         return json_encode($result, JSON_PRETTY_PRINT);
     }
 
-    public function getRulesPath() : string
-    {
-        return __DIR__ . '/../Rules/BetGame.json';
-    }
-
     /**
      * @return bool
      */

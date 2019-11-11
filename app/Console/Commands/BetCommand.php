@@ -1,6 +1,7 @@
 <?php
 namespace App\Console\Commands;
 
+use App\Rules\BetRule;
 use App\Services\BetGameService;
 use Illuminate\Console\Command;
 
@@ -36,7 +37,8 @@ class BetCommand extends Command
     public function handle()
     {
         try {
-            $betGame = new BetGameService();
+            $rule = new BetRule();
+            $betGame = new BetGameService($rule);
             $this->info($betGame->checkResults());
         } catch (\Exception $e) {
             $this->error($e->getTraceAsString());

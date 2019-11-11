@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Contracts\BetInterface;
+use App\Contracts\RuleInterface;
 
 /**
  * Class BetAbstract
@@ -20,12 +21,13 @@ abstract class BetAbstract implements BetInterface
 
     /**
      * BetAbstract constructor.
+     * @param RuleInterface $rule
      * @param int $bet_amount
      */
-    public function __construct($bet_amount = 100)
+    public function __construct(RuleInterface $rule, $bet_amount = 100)
     {
         $this->start($bet_amount);
-        $this->loadRules();
+        $this->loadRules($rule);
         $this->loadConfig();
         $this->loadBoard();
     }
@@ -80,19 +82,17 @@ abstract class BetAbstract implements BetInterface
     }
 
     /**
+     * @param RuleInterface $rule
      * @return array
      */
-    public function loadRules(): array
+    public function loadRules(RuleInterface $rule): array
     {
-        $rulePath = $this->getRulesPath();
-        $rulesJson = file_get_contents($rulePath);
-        $this->rules = json_decode($rulesJson, true);
+        $this->rules = $rule->getRules();
         return $this->rules;
     }
 
     abstract public function generateGame();
     abstract public function checkBetResults();
     abstract public function returnResults();
-    abstract public function getRulesPath();
     abstract public function loadConfig();
 }
