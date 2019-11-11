@@ -12,14 +12,15 @@ class BetGameService extends BetAbstract
      */
     public function generateGame(): array
     {
+        $board = [];
         foreach ($this->boardConfig as $line) {
             $lineBord = [];
             foreach ($line as $position) {
                 $lineBord[$position] = $this->generateValuesBoard();
             }
-            $this->board += $lineBord;
+            $board += $lineBord;
         }
-        return $this->board;
+        return $board;
     }
 
     /**
@@ -109,7 +110,7 @@ class BetGameService extends BetAbstract
     /**
      * @return bool
      */
-    public function loadConfig(): bool
+    public function loadAllRules(): bool
     {
         if ($this->isValidRule()) {
             $this->loadRuleToCheck();

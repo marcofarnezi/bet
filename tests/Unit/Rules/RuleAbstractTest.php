@@ -10,23 +10,22 @@ use App\Rules\RuleAbstract;
  */
 class RuleAbstractTest extends \TestCase
 {
-
     public function test_if_implements_ruleinterface()
     {
-        $mock = \Mockery::mock(RuleAbstract::class);
-        $this->assertInstanceOf(RuleInterface::class, $mock);
+        $stub = $this->getMockForAbstractClass(RuleAbstract::class);
+        $this->assertInstanceOf(RuleInterface::class, $stub);
     }
 
     public function test_return_get_rules()
     {
-        $ruleMock = \Mockery::mock(RuleAbstract::class);
-        $arrayMock = \Mockery::mock(\ArrayObject::class);
+        $stub = $this->getMockForAbstractClass(RuleAbstract::class);
 
-        $ruleMock->shouldReceive('getRules')
-            ->andReturn([$arrayMock, $arrayMock, $arrayMock, $arrayMock]);
+        $stub->expects($this->any())
+            ->method('getRulesPath')
+            ->will($this->returnValue('./app/Rules/BetGame.json'));
 
-        $result = $ruleMock->getRules();
+        $result = $stub->getRules();
         $this->assertCount(4, $result);
-        $this->assertInstanceOf(\ArrayObject::class,  last($result));
+        $this->assertTrue(array_key_exists('board_config', $result));
     }
 }

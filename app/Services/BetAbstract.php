@@ -16,6 +16,7 @@ abstract class BetAbstract implements BetInterface
     protected $prizeRules = [];
     protected $board = [];
     protected $rules;
+    protected $ruleObj;
     protected $winningGame = [];
     protected $winTotal = 0;
 
@@ -26,10 +27,8 @@ abstract class BetAbstract implements BetInterface
      */
     public function __construct(RuleInterface $rule, $bet_amount = 100)
     {
+        $this->ruleObj = $rule;
         $this->start($bet_amount);
-        $this->loadRules($rule);
-        $this->loadConfig();
-        $this->loadBoard();
     }
 
     /**
@@ -40,6 +39,13 @@ abstract class BetAbstract implements BetInterface
     {
         $this->betAmount = $bet_amount;
         return $bet_amount;
+    }
+
+    public function loadConfigs()
+    {
+        $this->loadRules($this->ruleObj);
+        $this->loadAllRules();
+        $this->loadBoard();
     }
 
     /**
@@ -68,7 +74,7 @@ abstract class BetAbstract implements BetInterface
      */
     public function loadBoard() : array
     {
-        $this->generateGame();
+        $this->board = $this->generateGame();
         return $this->board;
     }
 
@@ -94,5 +100,5 @@ abstract class BetAbstract implements BetInterface
     abstract public function generateGame();
     abstract public function checkBetResults();
     abstract public function returnResults();
-    abstract public function loadConfig();
+    abstract public function loadAllRules();
 }

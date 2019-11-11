@@ -26,6 +26,8 @@ class BetGameServiceTest extends \TestCase
         parent::__construct($name, $data, $dataName);
         $responseRule = $this->getResponseRule();
         $this->betGame = new BetGameService($this->getMockRule($responseRule));
+        $this->betGame->loadConfigs();
+
     }
 
     public function test_if_implements_betabstract()
@@ -103,6 +105,7 @@ class BetGameServiceTest extends \TestCase
         $rule = $this->getResponseRule();
         $rule['values_board'] = ['A'];
         $betGame = new BetGameService($this->getMockRule($rule));
+        $betGame->loadConfigs();
         $total = $betGame->checkBetResults();
 
         $this->assertEquals(5000, $total);
@@ -147,7 +150,7 @@ class BetGameServiceTest extends \TestCase
 
     public function test_load_config_success()
     {
-        $this->assertTrue($this->betGame->loadConfig());
+        $this->assertTrue($this->betGame->loadAllRules());
     }
 
     public function test_check_field_error()

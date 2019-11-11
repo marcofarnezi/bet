@@ -2,6 +2,7 @@
 namespace Unit;
 
 use App\Contracts\BetInterface;
+use App\Rules\BetRule;
 use App\Rules\RuleAbstract;
 use App\Services\BetAbstract;
 
@@ -11,46 +12,47 @@ use App\Services\BetAbstract;
  */
 class BetAbstractTest extends \TestCase
 {
+    private $ruleMock;
+    /**
+     * @var BetAbstract|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $stub;
+
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $responseRule = $this->getResponseRule();
+        $this->getMockRule($responseRule);
+        $this->stub = $this->getMockForAbstractClass(
+            BetAbstract::class,
+            [$this->ruleMock]
+        );
+    }
+
     public function test_if_implements_ruleinterface()
     {
-        $mock = \Mockery::mock(BetAbstract::class);
-        $this->assertInstanceOf(BetInterface::class, $mock);
+        $this->assertInstanceOf(BetInterface::class, $this->stub);
     }
 
     public function test_start_return_int()
     {
-        $mock = \Mockery::mock(BetAbstract::class);
-        $mock->shouldReceive('start')
-            ->with(10)
-            ->andReturn(10);
-        $betValue = $mock->start(10);
+        $betValue = $this->stub->start(10);
         $this->assertEquals(10, $betValue);
     }
 
     public function test_add_rule_to_check_return()
     {
-        $mock = \Mockery::mock(BetAbstract::class);
-        $ruleLine = \Mockery::mock(\ArrayObject::class);
-        $mock->shouldReceive('addRuleToCheck')
-            ->with([$ruleLine, $ruleLine])
-            ->andReturn([$ruleLine, $ruleLine]);
-
-        $ruleReurn = $mock->addRuleToCheck([$ruleLine, $ruleLine]);
-        $this->assertCount(2, $ruleReurn);
-        $this->assertInstanceOf(\ArrayObject::class, last($ruleReurn));
+        $ruleLine = ['sequence' => 2, 'value' => 10];
+        $ruleReurn = $this->stub->addRuleToCheck($ruleLine);
+        $this->assertEquals(2, last($ruleReurn)['sequence']);
+        $this->assertEquals(10, last($ruleReurn)['value']);
     }
 
     public function test_add_prize_rules_return()
     {
-        $mock = \Mockery::mock(BetAbstract::class);
         $sequence = 3;
         $premium = 20;
-
-        $mock->shouldReceive('addPrizeRules')
-            ->with($sequence, $premium)
-            ->andReturn([$sequence => $premium]);
-
-        $prizeReturn = $mock->addPrizeRules($sequence, $premium);
+        $prizeReturn = $this->stub->addPrizeRules($sequence, $premium);
         $this->assertCount(1, $prizeReturn);
         $this->assertEquals($sequence, key($prizeReturn));
         $this->assertEquals($premium, last($prizeReturn));
@@ -58,27 +60,62 @@ class BetAbstractTest extends \TestCase
 
     public function test_load_board_result()
     {
-        $mock = \Mockery::mock(BetAbstract::class);
-        $boardLine = \Mockery::mock(\ArrayObject::class);
-        $mock->shouldReceive('loadBoard')
-            ->andReturn([$boardLine, $boardLine]);
-
-        $ruleReurn = $mock->loadBoard();
-        $this->assertCount(2, $ruleReurn);
-        $this->assertInstanceOf(\ArrayObject::class, last($ruleReurn));
+        $this->stub->expects($this->any())
+            ->method('generateGame')
+            ->will($this->returnValue(['A', 'B', 'C', 'D', 'E']));
+        $this->stub->loadConfigs();
+        $ruleReurn = $this->stub->loadBoard();
+        $this->assertCount(5, $ruleReurn);
     }
 
     public function test_check_results_return()
     {
-        $mock = \Mockery::mock(BetAbstract::class);
-        $rule = \Mockery::mock(RuleAbstract::class);
-        $ruleLine = \Mockery::mock(\ArrayObject::class);
-        $mock->shouldReceive('loadRules')
-            ->with($rule)
-            ->andReturn([$ruleLine, $ruleLine, $ruleLine, $ruleLine]);
+        $rules = $this->stub->loadRules($this->ruleMock);
 
-        $rules = $mock->loadRules($rule);
         $this->assertCount(4, $rules);
-        $this->assertInstanceOf(\ArrayObject::class, last($rules));
+        $this->assertTrue(array_key_exists('board_config', $rules));
+        $this->assertTrue(array_key_exists('pay_game', $rules));
+        $this->assertTrue(array_key_exists('pay_value', $rules));
+        $this->assertTrue(array_key_exists('values_board', $rules));
+    }
+
+    /**
+     * @param $responseRule
+     * @return BetRule|\Mockery\LegacyMockInterface|\Mockery\MockInterface
+     */
+    private function getMockRule($responseRule)
+    {
+        $this->ruleMock = \Mockery::mock(BetRule::class);
+        $this->ruleMock->shouldReceive('getRules')
+            ->andReturn($responseRule);
+        return $this->ruleMock;
+    }
+
+    /**
+     * @return array
+     */
+    private function getResponseRule()
+    {
+        return [
+            "board_config" => [
+                [0, 3, 6, 9, 12],
+                [1, 4, 7, 10, 13],
+                [2, 5, 8, 11, 14]
+            ],
+            "pay_game" => [
+                [0, 3, 6, 9, 12],
+                [1, 4, 7, 10, 13],
+                [2, 5, 8, 11, 14],
+                [0, 4, 8, 10, 12],
+                [2, 4, 6, 10, 14]
+            ],
+            "pay_value" => [
+                ["sequence" => 3, "value" => 20],
+                ["sequence" => 4, "value" => 200],
+                ["sequence" => 5, "value" => 1000]
+            ],
+            "values_board" => ["A", "J", "Q", "K", "Cat", "Mon", "Bir"]
+        ];
+
     }
 }

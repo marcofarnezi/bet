@@ -39,6 +39,7 @@ class BetCommand extends Command
         try {
             $rule = new BetRule();
             $betGame = new BetGameService($rule);
+            $betGame->loadConfigs();
             $this->info($betGame->checkResults());
         } catch (\Exception $e) {
             $this->error($e->getTraceAsString());
