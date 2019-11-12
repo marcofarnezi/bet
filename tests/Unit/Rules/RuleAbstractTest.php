@@ -22,7 +22,7 @@ class RuleAbstractTest extends \TestCase
 
         $stub->expects($this->any())
             ->method('getRulesPath')
-            ->will($this->returnValue('./app/Rules/BetGame.json'));
+            ->will($this->returnValue('./app/Rules/Json/BetGame.json'));
 
         $result = $stub->getRules();
         $this->assertCount(4, $result);
