@@ -175,7 +175,7 @@ class BetGameService extends BetAbstract
             throw new \UnexpectedValueException("Rule without {$field} field");
         }
 
-        if (! is_array($this->rules['pay_game'])) {
+        if (! is_array($this->rules[$field])) {
             throw new \UnexpectedValueException("Rule {$field} isn't a array");
         }
 
